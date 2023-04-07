@@ -6,7 +6,7 @@
 /*   By: mlongo <mlongo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/07 13:02:21 by mlongo            #+#    #+#             */
-/*   Updated: 2023/04/07 13:33:10 by mlongo           ###   ########.fr       */
+/*   Updated: 2023/04/07 19:22:39 by mlongo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,45 @@
 #include <stdio.h>
 #include <fcntl.h>
 
-int	BUFFER_SIZE = 10; // -D BUFFER_SIZE=n
+// int	BUFFER_SIZE = 10; // -D BUFFER_SIZE=n
 
-char	*read_buf(int fd, char static *buf)
+int	ft_strlen(const char *str)
+{
+	int	i;
+
+	i = 0;
+	while (str[i])
+		i++;
+	return (i);
+}
+
+char	*ft_strjoin(char const *s1, char const *s2)
+{
+	char	*res;
+	int	i;
+
+	if (!s1 || !s2)
+		return (NULL);
+	res = malloc(ft_strlen(s1) + ft_strlen(s2) + 1);
+	if (res == NULL)
+		return (NULL);
+	i = 0;
+	res[ft_strlen(s1) + ft_strlen(s2)] = 0;
+	while (i < ft_strlen(s1))
+	{
+		res[i] = s1[i];
+		i++;
+	}
+	i = 0;
+	while (i < ft_strlen(s2))
+	{
+		res[ft_strlen(s1) + i] = s2[i];
+		i++;
+	}
+	return (res);
+}
+
+char	*read_buf(int fd, char *buf)
 {
 	char	*res;
 	int		i;
@@ -58,10 +94,9 @@ char	*read_buf(int fd, char static *buf)
 	// buffer size < \n (deve tornare la new line lo stesso...)
 	// buffer size > \n (static char *extra_chars)
 
-int	get_next_line()
+char	*get_next_line(int fd)
 {
 	// tester variables
-	int	fd = open("./test.txt", O_RDONLY); // while be given as input of the function
 
 	char static	buf[BUFFER_SIZE];
 	char		*tmp;
@@ -71,15 +106,29 @@ int	get_next_line()
 	tmp = NULL;
 	res = NULL;
 	signal = 1;
-	while (signal || buf[BUFFER_SIZE] != '\0' && buf[BUFFER_SIZE] != '\n')
+	res = read_buf(fd, buf);
+	while (signal || (buf[BUFFER_SIZE - 1] != '\0' && buf[BUFFER_SIZE - 1] != '\n'))
 	{
 		signal = 0;
 		tmp = res;
+		//printf("%s", read_buf(fd,buf));
 		res = ft_strjoin(res, read_buf(fd, buf));
+		//printf("%s", res);
 		if (res == NULL)
 			return (NULL);
 		if (tmp)
 			free(tmp);
 	}
 	return (res);
+}
+
+int	main()
+{
+	char	*res;
+
+	int	fd = open("./test.txt", O_RDONLY); // while be given as input of the function
+	res = get_next_line(fd);
+	//printf("%s", res);
+
+	return (0);
 }
