@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mlongo <mlongo@student.42.fr>              +#+  +:+       +#+        */
+/*   By: alessiolongo <alessiolongo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/07 13:02:21 by mlongo            #+#    #+#             */
-/*   Updated: 2023/04/07 19:22:39 by mlongo           ###   ########.fr       */
+/*   Updated: 2023/04/09 20:53:46 by alessiolong      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,11 +26,28 @@ int	ft_strlen(const char *str)
 	return (i);
 }
 
+char	*ft_strdup(const char *s)
+{
+	char	*res;
+	int		len;
+
+	len = ft_strlen(s);
+	res = malloc(len + 1);
+	if (res == NULL)
+		return (NULL);
+	res[len] = 0;
+	while (len--)
+		res[len] = s[len];
+	return (res);
+}
+
 char	*ft_strjoin(char const *s1, char const *s2)
 {
 	char	*res;
 	int	i;
 
+	//printf("%s\n", s1);
+	//printf("%s\n", s2);
 	if (!s1 || !s2)
 		return (NULL);
 	res = malloc(ft_strlen(s1) + ft_strlen(s2) + 1);
@@ -57,14 +74,20 @@ char	*read_buf(int fd, char *buf)
 	char	*res;
 	int		i;
 	int		j;
-
+	
+	i = 0;
 	read(fd, buf, BUFFER_SIZE);
 	while (buf[i] != '\0' && buf[i] != '\n')
+	{
+		//printf("%d\n", buf[i]);
 		i++;
-	i++;
+	}
+	//printf("%d\n", i);
+	//printf("%s\n", buf);
 	j = 0;
 	if (i < BUFFER_SIZE)
 	{
+		//printf("%d\n", 1);
 		res = (char *) malloc(i + 1);
 		if (res == NULL)
 			return (NULL);
@@ -88,7 +111,16 @@ char	*read_buf(int fd, char *buf)
 		}
 	}
 	else
-		return (buf);
+	{
+		//printf("%s\n", buf);
+		//printf("%d\n", 1);
+		res = ft_strdup(buf);
+		return (res);
+	}
+	//printf("%s\n", res);
+	//printf("%d\n", 4);
+	//printf("%s\n", res);
+	printf("%s\n", buf);
 	return (res);
 }
 	// buffer size < \n (deve tornare la new line lo stesso...)
@@ -102,22 +134,24 @@ char	*get_next_line(int fd)
 	char		*tmp;
 	char		*res;
 	int			signal;
+	int			i = 4;
 
 	tmp = NULL;
 	res = NULL;
 	signal = 1;
 	res = read_buf(fd, buf);
+	//printf("%s\n", res);
 	while (signal || (buf[BUFFER_SIZE - 1] != '\0' && buf[BUFFER_SIZE - 1] != '\n'))
+	//while (i--)
 	{
 		signal = 0;
 		tmp = res;
 		//printf("%s", read_buf(fd,buf));
+		//printf("%s\n", res);
 		res = ft_strjoin(res, read_buf(fd, buf));
-		//printf("%s", res);
+		//printf("%s\n", res);
 		if (res == NULL)
 			return (NULL);
-		if (tmp)
-			free(tmp);
 	}
 	return (res);
 }
@@ -128,7 +162,7 @@ int	main()
 
 	int	fd = open("./test.txt", O_RDONLY); // while be given as input of the function
 	res = get_next_line(fd);
-	//printf("%s", res);
+	printf("%s", res);
 
 	return (0);
 }
