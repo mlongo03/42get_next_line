@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line2.c                                   :+:      :+:    :+:   */
+/*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mlongo <mlongo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/07 13:02:21 by mlongo            #+#    #+#             */
-/*   Updated: 2023/04/11 15:10:48y mlongo           ###   ########.fr       */
+/*   Updated: 2023/04/11 17:02:39 by mlongo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ char	*read_buf(int fd, char *buf)
 	if (i < BUFFER_SIZE)
 	{
 		res	= ft_substr(buf, 0, i);
-		ft_strcpy(&buf, res, i, BUFFER_SIZE - i);
+		ft_strcpy(&buf, &buf, i, BUFFER_SIZE - i);
 	}
 	else
 		res = ft_strdup(buf);
@@ -62,9 +62,23 @@ char	*get_next_line(int fd)
 	char static	buf[BUFFER_SIZE];
 	char		*tmp;
 	char		*res;
+	// int			i;
+	// int			j;
 
 	tmp = NULL;
 	res = NULL;
+	// i = 0;
+	// j = 0;
+	// if (*buf)
+	// {
+	// 	i = ft_strchr(buf, '\0');
+	// 	while (j < i)
+	// 	{
+	// 		res[j] = buf[j];
+	// 		j++;
+	// 	}
+	// }
+	// else
 	res = read_buf(fd, buf);
 	while (buf[BUFFER_SIZE - 1] != '\0' && buf[BUFFER_SIZE - 1] != '\n')
 		res = ft_strjoin(res, read_buf(fd, buf));

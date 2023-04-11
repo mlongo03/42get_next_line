@@ -6,7 +6,7 @@
 /*   By: mlongo <mlongo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/11 15:17:33 by mlongo            #+#    #+#             */
-/*   Updated: 2023/04/11 16:10:41 by mlongo           ###   ########.fr       */
+/*   Updated: 2023/04/11 16:47:40 by mlongo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ char	*ft_substr(char *s, int start, int len)
 	return (str);
 }
 
-void	ft_strcpy(char **dst, char *src, int start, int size)
+void	ft_strcpy(char **dst, char **src, int start, int size)
 {
 	int		j;
 
@@ -48,7 +48,7 @@ void	ft_strcpy(char **dst, char *src, int start, int size)
 	while (j < BUFFER_SIZE)
 	{
 		if (j < size)
-			(*dst)[j] = src[start++];
+			(*dst)[j] = (*src)[start++];
 		else
 			(*dst)[j] = 0;
 		j++;
