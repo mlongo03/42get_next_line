@@ -6,7 +6,7 @@
 /*   By: mlongo <mlongo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/07 13:02:21 by mlongo            #+#    #+#             */
-/*   Updated: 2023/04/11 18:39:11 by mlongo           ###   ########.fr       */
+/*   Updated: 2023/04/11 19:10:41 by mlongo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,18 +63,25 @@ char	*get_next_line(int fd)
 	char static	buf[BUFFER_SIZE];
 	char		*tmp;
 	char		*res;
+	int			i;
+	char		*ptr;
 
+	ptr = buf;
 	tmp = NULL;
 	res = NULL;
-	i = ft_strchr(buf, '\n') + 1;
-	if (i < BUFFER_SIZE)
+	if (buf[0])
 	{
-		res	= ft_substr(buf, 0, i);
-		ft_strcpy(&buf, &buf, i, BUFFER_SIZE - i);
+		i = ft_strchr(buf, '\n') + 1;
+		if (i < BUFFER_SIZE)
+		{
+			res	= ft_substr(buf, 0, i);
+			ft_strcpy(&ptr, &ptr, i, BUFFER_SIZE - i);
+		}
+		else
+			res = ft_strdup(buf);
 	}
 	else
-		res = ft_strdup(buf);
-	res = read_buf(fd, buf);
+		res = read_buf(fd, buf);
 	if (!res)
 		return (NULL);
 	while (buf[BUFFER_SIZE - 1] != '\0' && buf[BUFFER_SIZE - 1] != '\n')
