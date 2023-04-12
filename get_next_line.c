@@ -6,13 +6,11 @@
 /*   By: mlongo <mlongo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/07 13:02:21 by mlongo            #+#    #+#             */
-/*   Updated: 2023/04/12 11:28:34 by mlongo           ###   ########.fr       */
+/*   Updated: 2023/04/12 19:28:54 by mlongo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-#include <stdio.h>
-#include <fcntl.h>
 
 void	ft_bzero(void *s, size_t n)
 {
@@ -49,19 +47,45 @@ char	*ft_strjoin(char *s1, char *s2)
 	return (res);
 }
 
-void	ft_check_read(char **buf, char **res)
+void	ft_check_read2(char **buf, char **res)
 {
+	char	*tmp;
 	int	i;
 
 	i = ft_strchr(*buf, '\n') + 1;
 	if (i < BUFFER_SIZE)
 	{
+		tmp = *res;
 		*res = ft_substr(*buf, 0, i);
+		free(tmp);
 		ft_strcpy(buf, buf, i, BUFFER_SIZE - i);
 	}
 	else
 	{
+		// tmp = *res;
 		*res = ft_strdup(*buf);
+		// free(tmp);
+	}
+}
+
+void	ft_check_read(char **buf, char **res)
+{
+	char	*tmp;
+	int		i;
+
+	i = ft_strchr(*buf, '\n') + 1;
+	if (i < BUFFER_SIZE)
+	{
+		tmp = *res;
+		*res = ft_substr(*buf, 0, i);
+		free(tmp);
+		ft_strcpy(buf, buf, i, BUFFER_SIZE - i);
+	}
+	else
+	{
+		// tmp = *res;
+		*res = ft_strdup(*buf);
+		// free(tmp);
 		ft_bzero(*buf, i);
 	}
 }
@@ -69,10 +93,17 @@ void	ft_check_read(char **buf, char **res)
 char	*read_buf(int fd, char *buf)
 {
 	char	*res;
+	int		i;
 
-	if (!read(fd, buf, BUFFER_SIZE))
+	i = read(fd, buf, BUFFER_SIZE);
+	if (!i)
 		return (NULL);
-	ft_check_read(&buf, &res);
+	if (i < BUFFER_SIZE)
+	{
+		res = ft_substr(buf, 0, i);
+		ft_strcpy(&buf, &res, 0, i);
+	}
+	ft_check_read2(&buf, &res);
 	return (res);
 }
 
@@ -94,9 +125,11 @@ char	*get_next_line(int fd)
 		return (NULL);
 	while (buf[BUFFER_SIZE - 1] != '\0' && buf[BUFFER_SIZE - 1] != '\n')
 	{
+		tmp = res;
 		res = ft_strjoin(res, read_buf(fd, buf));
 		if (!res)
 			return (NULL);
+		free(tmp);
 	}
 	return (res);
 }
