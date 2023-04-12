@@ -6,7 +6,7 @@
 /*   By: mlongo <mlongo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/07 13:02:21 by mlongo            #+#    #+#             */
-/*   Updated: 2023/04/11 19:10:41 by mlongo           ###   ########.fr       */
+/*   Updated: 2023/04/12 11:07:35 by mlongo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,16 @@
 #include <stdio.h>
 #include <fcntl.h>
 
-char	*ft_strjoin(char  *s1, char  *s2)
+void	ft_bzero(void *s, size_t n)
+{
+	size_t	i;
+
+	i = 0;
+	while (i < n)
+		((unsigned char *) s)[i++] = 0;
+}
+
+char	*ft_strjoin(char *s1, char *s2)
 {
 	char	*res;
 	int		i;
@@ -45,16 +54,19 @@ char	*read_buf(int fd, char *buf)
 	char	*res;
 	int		i;
 
-	if(!read(fd, buf, BUFFER_SIZE))
+	if (!read(fd, buf, BUFFER_SIZE))
 		return (NULL);
 	i = ft_strchr(buf, '\n') + 1;
 	if (i < BUFFER_SIZE)
 	{
-		res	= ft_substr(buf, 0, i);
+		res = ft_substr(buf, 0, i);
 		ft_strcpy(&buf, &buf, i, BUFFER_SIZE - i);
 	}
 	else
+	{
 		res = ft_strdup(buf);
+		ft_bzero(buf, i);
+	}
 	return (res);
 }
 
@@ -74,11 +86,14 @@ char	*get_next_line(int fd)
 		i = ft_strchr(buf, '\n') + 1;
 		if (i < BUFFER_SIZE)
 		{
-			res	= ft_substr(buf, 0, i);
+			res = ft_substr(buf, 0, i);
 			ft_strcpy(&ptr, &ptr, i, BUFFER_SIZE - i);
 		}
 		else
+		{
 			res = ft_strdup(buf);
+			ft_bzero(buf, i);
+		}
 	}
 	else
 		res = read_buf(fd, buf);
