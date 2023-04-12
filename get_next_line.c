@@ -6,7 +6,7 @@
 /*   By: mlongo <mlongo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/07 13:02:21 by mlongo            #+#    #+#             */
-/*   Updated: 2023/04/12 11:07:35 by mlongo           ###   ########.fr       */
+/*   Updated: 2023/04/12 11:28:34 by mlongo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,24 +49,30 @@ char	*ft_strjoin(char *s1, char *s2)
 	return (res);
 }
 
-char	*read_buf(int fd, char *buf)
+void	ft_check_read(char **buf, char **res)
 {
-	char	*res;
-	int		i;
+	int	i;
 
-	if (!read(fd, buf, BUFFER_SIZE))
-		return (NULL);
-	i = ft_strchr(buf, '\n') + 1;
+	i = ft_strchr(*buf, '\n') + 1;
 	if (i < BUFFER_SIZE)
 	{
-		res = ft_substr(buf, 0, i);
-		ft_strcpy(&buf, &buf, i, BUFFER_SIZE - i);
+		*res = ft_substr(*buf, 0, i);
+		ft_strcpy(buf, buf, i, BUFFER_SIZE - i);
 	}
 	else
 	{
-		res = ft_strdup(buf);
-		ft_bzero(buf, i);
+		*res = ft_strdup(*buf);
+		ft_bzero(*buf, i);
 	}
+}
+
+char	*read_buf(int fd, char *buf)
+{
+	char	*res;
+
+	if (!read(fd, buf, BUFFER_SIZE))
+		return (NULL);
+	ft_check_read(&buf, &res);
 	return (res);
 }
 
@@ -75,26 +81,13 @@ char	*get_next_line(int fd)
 	char static	buf[BUFFER_SIZE];
 	char		*tmp;
 	char		*res;
-	int			i;
 	char		*ptr;
 
 	ptr = buf;
 	tmp = NULL;
 	res = NULL;
 	if (buf[0])
-	{
-		i = ft_strchr(buf, '\n') + 1;
-		if (i < BUFFER_SIZE)
-		{
-			res = ft_substr(buf, 0, i);
-			ft_strcpy(&ptr, &ptr, i, BUFFER_SIZE - i);
-		}
-		else
-		{
-			res = ft_strdup(buf);
-			ft_bzero(buf, i);
-		}
-	}
+		ft_check_read(&ptr, &res);
 	else
 		res = read_buf(fd, buf);
 	if (!res)
