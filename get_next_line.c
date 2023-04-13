@@ -6,7 +6,7 @@
 /*   By: mlongo <mlongo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/07 13:02:21 by mlongo            #+#    #+#             */
-/*   Updated: 2023/04/12 19:28:54 by mlongo           ###   ########.fr       */
+/*   Updated: 2023/04/13 18:58:42 by mlongo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,89 +47,91 @@ char	*ft_strjoin(char *s1, char *s2)
 	return (res);
 }
 
-void	ft_check_read2(char **buf, char **res)
+void	*ft_calloc(int count, int size)
 {
-	char	*tmp;
-	int	i;
+	void	*res;
+	int		len;
 
-	i = ft_strchr(*buf, '\n') + 1;
-	if (i < BUFFER_SIZE)
-	{
-		tmp = *res;
-		*res = ft_substr(*buf, 0, i);
-		free(tmp);
-		ft_strcpy(buf, buf, i, BUFFER_SIZE - i);
-	}
-	else
-	{
-		// tmp = *res;
-		*res = ft_strdup(*buf);
-		// free(tmp);
-	}
+	len = count * size;
+	res = (void *) malloc(len);
+	if (res == NULL)
+		return (NULL);
+	ft_bzero(res, len);
+	return (res);
 }
 
-void	ft_check_read(char **buf, char **res)
-{
-	char	*tmp;
-	int		i;
-
-	i = ft_strchr(*buf, '\n') + 1;
-	if (i < BUFFER_SIZE)
-	{
-		tmp = *res;
-		*res = ft_substr(*buf, 0, i);
-		free(tmp);
-		ft_strcpy(buf, buf, i, BUFFER_SIZE - i);
-	}
-	else
-	{
-		// tmp = *res;
-		*res = ft_strdup(*buf);
-		// free(tmp);
-		ft_bzero(*buf, i);
-	}
-}
-
-char	*read_buf(int fd, char *buf)
+char	*get_res(char *buf, int end)
 {
 	char	*res;
-	int		i;
+	int		index;
 
-	i = read(fd, buf, BUFFER_SIZE);
-	if (!i)
-		return (NULL);
-	if (i < BUFFER_SIZE)
+	ft_strchr(buf, '\n', &index);
+	if (end == BUFFER_SIZE)
 	{
-		res = ft_substr(buf, 0, i);
-		ft_strcpy(&buf, &res, 0, i);
+		res = ft_substr(buf, 0, index);
+		ft_strcpy(&buf, &buf, index, BUFFER_SIZE - index);
 	}
-	ft_check_read2(&buf, &res);
+	else
+	{
+		if (index >= end)
+		{
+			res = ft_substr(buf, 0, end);
+			ft_bzero(buf, BUFFER_SIZE);
+		}
+		else
+		{
+			res = ft_substr(buf, 0, index);
+			ft_strcpy(&buf, &buf, index, BUFFER_SIZE - index);
+		}
+	}
 	return (res);
 }
 
 char	*get_next_line(int fd)
 {
 	char static	buf[BUFFER_SIZE];
-	char		*tmp;
 	char		*res;
+	char		*tmp;
+	char		*tmp2;
 	char		*ptr;
+	int			end;
+	int			i;
 
-	ptr = buf;
-	tmp = NULL;
-	res = NULL;
-	if (buf[0])
-		ft_check_read(&ptr, &res);
-	else
-		res = read_buf(fd, buf);
+	i = 0;
+	res = ft_calloc(1, 1);
 	if (!res)
 		return (NULL);
-	while (buf[BUFFER_SIZE - 1] != '\0' && buf[BUFFER_SIZE - 1] != '\n')
+	end = 0;
+	ptr = buf;
+	if (fd < 0 || BUFFER_SIZE <= 0)
+		return (0);
+	if (ptr[0])
 	{
 		tmp = res;
-		res = ft_strjoin(res, read_buf(fd, buf));
-		if (!res)
-			return (NULL);
+		res = get_res(ptr, ft_strlen(ptr));
 		free(tmp);
 	}
+	if (ft_strchr(res, '\n', &i) >= 0)
+		return (res);
+	end = read(fd, ptr, BUFFER_SIZE);
+	while (end)
+	{
+		if (end == 0)
+			return (NULL);
+		if (end == (-1))
+		{
+			free(buf);
+			return (NULL);
+		}
+		tmp = res;
+		tmp2 = get_res(ptr, end);
+		res = ft_strjoin(res, tmp2);
+		free(tmp);
+		if (ft_strchr(res, '\n', &i) >= 0)
+			break ;
+		end = read(fd, ptr, BUFFER_SIZE);
+		free(tmp2);
+	}
+	free(tmp2);
 	return (res);
 }

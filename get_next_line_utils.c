@@ -6,7 +6,7 @@
 /*   By: mlongo <mlongo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/11 15:17:33 by mlongo            #+#    #+#             */
-/*   Updated: 2023/04/12 11:09:40 by mlongo           ###   ########.fr       */
+/*   Updated: 2023/04/13 16:56:29 by mlongo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,18 +55,20 @@ void	ft_strcpy(char **dst, char **src, int start, int size)
 	}
 }
 
-int	ft_strchr( char *s, int c)
+int	ft_strchr( char *s, int c, int *i)
 {
+	*i = 0;
 	char	*r;
 	char	x;
-	int		i;
 
 	x = (char) c;
 	r = (char *) s;
-	i = 0;
-	while (r[i] && r[i] != x)
-		i++;
-	return (i);
+	while (r[*i] && r[*i] != x)
+		*i = *i + 1;
+	if (r[*i] != x)
+		return (-1);
+	*i = *i + 1;
+	return (*i);
 }
 
 int	ft_strlen( char *str)
