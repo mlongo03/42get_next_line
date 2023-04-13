@@ -6,7 +6,7 @@
 /*   By: mlongo <mlongo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/07 13:02:21 by mlongo            #+#    #+#             */
-/*   Updated: 2023/04/13 18:58:42 by mlongo           ###   ########.fr       */
+/*   Updated: 2023/04/13 19:28:52 by mlongo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,8 @@ char	*ft_strjoin(char *s1, char *s2)
 		res[ft_strlen(s1) + i] = s2[i];
 		i++;
 	}
+	free(s1);
+	free(s2);
 	return (res);
 }
 
@@ -91,23 +93,24 @@ char	*get_next_line(int fd)
 {
 	char static	buf[BUFFER_SIZE];
 	char		*res;
-	char		*tmp;
-	char		*tmp2;
 	char		*ptr;
+	char		*tmp;
 	int			end;
 	int			i;
 
+	if (fd < 0 || fd >= 4096 || fd == 1 || fd == 2 || BUFFER_SIZE <= 0)
+		return (NULL);
 	i = 0;
 	res = ft_calloc(1, 1);
 	if (!res)
 		return (NULL);
+	tmp = res;
 	end = 0;
 	ptr = buf;
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (0);
 	if (ptr[0])
 	{
-		tmp = res;
 		res = get_res(ptr, ft_strlen(ptr));
 		free(tmp);
 	}
@@ -123,15 +126,10 @@ char	*get_next_line(int fd)
 			free(buf);
 			return (NULL);
 		}
-		tmp = res;
-		tmp2 = get_res(ptr, end);
-		res = ft_strjoin(res, tmp2);
-		free(tmp);
+		res = ft_strjoin(res, get_res(ptr, end));
 		if (ft_strchr(res, '\n', &i) >= 0)
 			break ;
 		end = read(fd, ptr, BUFFER_SIZE);
-		free(tmp2);
 	}
-	free(tmp2);
 	return (res);
 }
