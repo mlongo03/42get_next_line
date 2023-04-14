@@ -6,7 +6,7 @@
 /*   By: mlongo <mlongo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/07 13:02:21 by mlongo            #+#    #+#             */
-/*   Updated: 2023/04/13 19:28:52 by mlongo           ###   ########.fr       */
+/*   Updated: 2023/04/14 11:40:54 by mlongo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,8 +107,6 @@ char	*get_next_line(int fd)
 	tmp = res;
 	end = 0;
 	ptr = buf;
-	if (fd < 0 || BUFFER_SIZE <= 0)
-		return (0);
 	if (ptr[0])
 	{
 		res = get_res(ptr, ft_strlen(ptr));
@@ -130,6 +128,11 @@ char	*get_next_line(int fd)
 		if (ft_strchr(res, '\n', &i) >= 0)
 			break ;
 		end = read(fd, ptr, BUFFER_SIZE);
+	}
+	if (!res[0])
+	{
+		free(tmp);
+		return (NULL);
 	}
 	return (res);
 }
