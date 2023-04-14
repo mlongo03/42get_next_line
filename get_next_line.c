@@ -6,7 +6,7 @@
 /*   By: mlongo <mlongo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/07 13:02:21 by mlongo            #+#    #+#             */
-/*   Updated: 2023/04/14 12:14:58 by mlongo           ###   ########.fr       */
+/*   Updated: 2023/04/14 18:51:30 by mlongo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,52 +89,57 @@ char	*get_res(char *buf, int end)
 	return (res);
 }
 
+void	*ft_memcpy(void *dst, const void *src, size_t n)
+{
+	const char	*s;
+	char		*d;
+
+	d = dst;
+	s = src;
+	if (!d && !s)
+		return (NULL);
+	while (n--)
+		*d++ = *s++;
+	return (dst);
+}
+
+char	*expand_res(char *current, char *buf)
+{
+	char	*res;
+
+	if (!current)
+	{
+		res = (char *)ft_calloc(BUFFER_SIZE + 1);
+		return (res);
+	}
+	else
+		res = (char *)ft_calloc(((ft_strlen(current)) + BUFFER_SIZE) + 1);
+	res = ft_memcpy(res, current, ft_strlen(current));
+	free(current);
+	return (res);
+}
+
+char	*load_res(buf)
+{
+
+}
+
 char	*get_next_line(int fd)
 {
-	char static	buf[BUFFER_SIZE];
-	char		*res;
-	char		*ptr;
-	char		*tmp;
-	int			end;
-	int			i;
+	char static res[BUFFER_SIZE];
+	char 		*res;
+	int			countread;
 
 	if (fd < 0 || fd >= 4096 || fd == 1 || fd == 2 || BUFFER_SIZE <= 0)
 		return (NULL);
-	i = 0;
-	res = ft_calloc(1, 1);
-	if (!res)
-		return (NULL);
-	tmp = res;
-	end = 0;
-	ptr = buf;
-	if (ptr[0])
+	res = expand_res(NULL, buf);
+	res = 
+	countread = read(fd, buf, BUFFER_SIZE);
+	while (countread && res[ft_strlen(res) - 1] != '\n')
 	{
-		res = get_res(ptr, ft_strlen(ptr));
-		free(tmp);
-	}
-	if (ft_strchr(res, '\n', &i) >= 0)
-		return (res);
-	end = read(fd, ptr, BUFFER_SIZE);
-	while (end)
-	{
-		if (end == 0)
-			return (NULL);
-		if (end == (-1))
-		{
-			if (buf[0])
-				free(buf);
-			free(tmp);
-			return (NULL);
-		}
-		res = ft_strjoin(res, get_res(ptr, end));
-		if (ft_strchr(res, '\n', &i) >= 0)
-			break ;
-		end = read(fd, ptr, BUFFER_SIZE);
-	}
-	if (!res[0])
-	{
-		free(tmp);
-		return (NULL);
+		res = expand_res(res, buf);
+		res = load_res(buf);
+		countread = read(fd, buf, BUFFER_SIZE);
 	}
 	return (res);
 }
