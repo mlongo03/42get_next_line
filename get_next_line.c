@@ -6,7 +6,7 @@
 /*   By: mlongo <mlongo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/07 13:02:21 by mlongo            #+#    #+#             */
-/*   Updated: 2023/04/14 11:40:54 by mlongo           ###   ########.fr       */
+/*   Updated: 2023/04/14 12:14:58 by mlongo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,7 +121,9 @@ char	*get_next_line(int fd)
 			return (NULL);
 		if (end == (-1))
 		{
-			free(buf);
+			if (buf[0])
+				free(buf);
+			free(tmp);
 			return (NULL);
 		}
 		res = ft_strjoin(res, get_res(ptr, end));
