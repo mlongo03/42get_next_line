@@ -6,7 +6,7 @@
 /*   By: mlongo <mlongo@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/07 13:02:21 by mlongo            #+#    #+#             */
-/*   Updated: 2023/04/14 18:51:30 by mlongo           ###   ########.fr       */
+/*   Updated: 2023/04/14 18:53:07 by mlongo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,8 +112,7 @@ char	*expand_res(char *current, char *buf)
 		res = (char *)ft_calloc(BUFFER_SIZE + 1);
 		return (res);
 	}
-	else
-		res = (char *)ft_calloc(((ft_strlen(current)) + BUFFER_SIZE) + 1);
+	res = (char *)ft_calloc(((ft_strlen(current)) + BUFFER_SIZE) + 1);
 	res = ft_memcpy(res, current, ft_strlen(current));
 	free(current);
 	return (res);
@@ -133,7 +132,7 @@ char	*get_next_line(int fd)
 	if (fd < 0 || fd >= 4096 || fd == 1 || fd == 2 || BUFFER_SIZE <= 0)
 		return (NULL);
 	res = expand_res(NULL, buf);
-	res = 
+	res = load_res(res, buf);
 	countread = read(fd, buf, BUFFER_SIZE);
 	while (countread && res[ft_strlen(res) - 1] != '\n')
 	{
