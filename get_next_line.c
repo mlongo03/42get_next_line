@@ -6,11 +6,12 @@
 /*   By: alessiolongo <alessiolongo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/07 13:02:21 by mlongo            #+#    #+#             */
-/*   Updated: 2023/04/15 17:14:54 by alessiolong      ###   ########.fr       */
+/*   Updated: 2023/04/15 19:43:16 by alessiolong      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+#include <stdio.h>
 
 char	*expand_res(char *current)
 {
@@ -41,8 +42,10 @@ void	load_res(char *res, char *buf)
 		res[i] = buf[i];
 		if (res[i++] == '\n')
 		{
-			ft_memcpy(buf, &res[i], ft_strlen(res) - i);
-			ft_memset(buf, 0, BUFFER_SIZE - (ft_strlen(res) - i));
+			ft_memcpy(buf, &buf[i], BUFFER_SIZE - i);
+			ft_memset(buf + BUFFER_SIZE - i, 0, i);
+			printf("%s", buf);
+			return ;
 		}
 	}
 }
@@ -62,9 +65,11 @@ char	*get_next_line(int fd)
 	{
 		res = expand_res(res);
 		load_res(res, buf);
+		if (res[ft_strlen(res) - 1] == '\n')
+			break ;
 		countread = read(fd, buf, BUFFER_SIZE);
 	}
-	if (countread < 0)
+	if (res && !*res)
 	{
 		free(res);
 		return (NULL);

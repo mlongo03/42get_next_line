@@ -6,7 +6,7 @@
 /*   By: alessiolongo <alessiolongo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/11 15:17:33 by mlongo            #+#    #+#             */
-/*   Updated: 2023/04/15 16:41:21 by alessiolong      ###   ########.fr       */
+/*   Updated: 2023/04/15 19:18:29 by alessiolong      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ void	*ft_calloc(int count, int size)
 	return (res);
 }
 
-void	*ft_memcpy(void *dst, const void *src, size_t n)
+void	*ft_memcpy(void *dst, const void *src, int n)
 {
 	const char	*s;
 	char		*d;
@@ -55,17 +55,15 @@ void	*ft_memcpy(void *dst, const void *src, size_t n)
 		return (NULL);
 	while (n--)
 		*d++ = *s++;
-	return (dst);
+	return (&dst[0]);
 }
 
-void	*ft_memset(void *s, int c, size_t n)
+void	*ft_memset(char *s, int c, int n)
 {
-	size_t			i;
-	unsigned char	x;
+	int	i;
 
-	x = (unsigned char) c;
 	i = 0;
 	while (i < n)
-		((unsigned char *) s)[i++] = x;
+		s[i++] = (char)c;
 	return (s);
 }
