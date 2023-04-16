@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: alessiolongo <alessiolongo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/07 13:02:21 by mlongo            #+#    #+#             */
-/*   Updated: 2023/04/16 11:36:23 by alessiolong      ###   ########.fr       */
+/*   Updated: 2023/04/16 11:45:06 by alessiolong      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 char	*expand_res(char *current)
 {
@@ -51,7 +51,7 @@ void	load_res(char *res, char *buf)
 
 char	*get_next_line(int fd)
 {
-	char static	buf[BUFFER_SIZE];
+	char static	buf[4096][BUFFER_SIZE];
 	char		*res;
 	int			countread;
 
@@ -59,16 +59,16 @@ char	*get_next_line(int fd)
 	if (fd < 0 || fd >= 4096 || fd == 1 || fd == 2 || BUFFER_SIZE <= 0)
 		return (NULL);
 	res = expand_res(NULL);
-	load_res(res, buf);
-	if (!*buf)
-		countread = read(fd, buf, BUFFER_SIZE);
+	load_res(res, buf[fd]);
+	if (!*buf[fd])
+		countread = read(fd, buf[fd], BUFFER_SIZE);
 	while (countread > 0 && res[ft_strlen(res) - 1] != '\n')
 	{
 		res = expand_res(res);
-		load_res(res, buf);
+		load_res(res, buf[fd]);
 		if (res[ft_strlen(res) - 1] == '\n')
 			break ;
-		countread = read(fd, buf, BUFFER_SIZE);
+		countread = read(fd, buf[fd], BUFFER_SIZE);
 	}
 	if (res && !*res)
 	{
